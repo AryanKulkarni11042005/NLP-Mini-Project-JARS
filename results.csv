@@ -1,0 +1,9 @@
+,"TFIDF, Hindi only","TFIDF, Hindi+Hinglish","LSTM, Hindi+Hinglish"
+Clean Hindi,0.254,0.251,0.217
+Clean Hinglish,0.102,0.248,0.228
+Low noisy,0.105,0.244,0.206
+Low normalized,0.106,0.256,0.226
+Medium noisy,0.099,0.222,0.172
+Medium normalized,0.105,0.26,0.215
+High noisy,0.1,0.132,0.106
+High normalized,0.105,0.24,0.206
