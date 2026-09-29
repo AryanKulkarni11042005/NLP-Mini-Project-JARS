@@ -1,0 +1,10 @@
+model,clean Hinglish,High noisy,drop %,High normalized,loss recovered %
+"TFIDF, Hinglish only",0.696,0.251,63.9,0.654,90.6
+"TFIDF, Hindi+Hinglish",0.694,0.252,63.7,0.657,91.6
+"LSTM, Hinglish only",0.631,0.194,69.3,0.617,96.8
+"LSTM, Hindi+Hinglish",0.603,0.191,68.3,0.595,98.1
+"fastText, Hinglish only",0.655,0.542,17.3,0.627,75.2
+"fastText, Hindi+Hinglish",0.649,0.543,16.3,0.633,84.9
+"IndicBERT, Hindi only",0.493,0.339,31.2,0.485,94.8
+"IndicBERT, Hinglish only",0.674,0.493,26.9,0.66,92.3
+"IndicBERT, Hindi+Hinglish",0.719,0.541,24.8,0.677,76.4
