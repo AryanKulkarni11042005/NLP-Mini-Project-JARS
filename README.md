@@ -57,6 +57,8 @@ Devanagari dataset -> clean + split (80/20)
 
 All models use class-balanced training. Each was trained in up to three setups: Hindi only, Hinglish only, and Hindi + Hinglish together.
 
+Fine-Tuned indicBERT model can be found at this link: `https://drive.google.com/drive/folders/11Fyju7EzLF4X4iYmymkvlKJ8pHsIerjK?usp=sharing`
+
 ## Results (product review dataset)
 
 Scores are macro F1 on 500 test reviews (70 negative), one training run per model. Differences under about 0.03 are within noise.
