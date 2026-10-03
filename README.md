@@ -1,7 +1,5 @@
-# NLP Mini Project: Robustness of NLP Models to Transliteration and Spelling Noise in Hindi Text
-
-**Team**
-
+**# NLP Mini Project: Robustness of NLP Models to Transliteration and Spelling Noise in Hindi Text**
+****Team****
 | Name | Roll No. |
 |---|---|
 | Jyotsna Kasibhotla | 23102B0078 |
@@ -9,16 +7,14 @@
 | Rishant Singh | 23102B0065 |
 | Aryan Kulkarni | 23102B0072 |
 
-## Overview
-
+**## Overview**
 Many people type Hindi in Roman letters ("Hinglish") and spell the same word several ways (`accha`, `achha`, `acha`). Models trained on clean Devanagari text have never seen this kind of input. This project measures how much transliteration and spelling noise hurt Hindi text classifiers, which models cope best, and how much of the loss can be recovered by normalizing the text.
 
-**Research question:** How do transliteration and spelling noise affect the performance of different NLP models on Hindi text classification, and can normalization recover the lost performance?
+****Research question:**** How do transliteration and spelling noise affect the performance of different NLP models on Hindi text classification, and can normalization recover the lost performance?
 
 The repository also contains a small Gradio demo that classifies the sentiment of a Hindi or Hinglish product review.
 
-## Datasets
-
+**## Datasets**
 | Dataset | Task | Size | Notes |
 |---|---|---|---|
 | Hindi product reviews (`OdiaGenAI/sentiment_analysis_hindi`, Hugging Face) | Sentiment: positive / neutral / negative | 2,497 reviews (1,997 train, 500 test) | Main dataset, used for all four models and the demo |
@@ -26,28 +22,26 @@ The repository also contains a small Gradio demo that classifies the sentiment o
 
 Both datasets are in Devanagari. Duplicate sentences are removed before an 80/20 stratified split, so no sentence appears in both train and test.
 
-## Method
-
+**## Method**
 ```
 Devanagari dataset -> clean + split (80/20)
-        |
-        +--> Devanagari text
-        +--> Hinglish (rule-based transliteration)
-                   |
-                   +--> add spelling noise (Low / Medium / High) [test set only]
-                                |
-                                +--> normalize (edit-distance repair)
-                                |
-                                +--> 4 models --> macro F1
+|
++--> Devanagari text
++--> Hinglish (rule-based transliteration)
+|
++--> add spelling noise (Low / Medium / High) [test set only]
+|
++--> normalize (edit-distance repair)
+|
++--> 4 models --> macro F1
 ```
 
-1. **Transliteration.** Devanagari is converted to Roman letters with `indic-transliteration` (ITRANS) plus rules for casual spelling (Devanagari dotted letters cleaned, silent final vowel dropped, lowercase). English loanwords come out phonetically (`tebalet` for "tablet") because Devanagari does not record the original spelling.
-2. **Spelling noise.** Applied to the Hinglish test set only. Each word is edited with probability 0.3 (Low), 0.6 (Medium) or 1.0 (High). An edit is a letter swap (`aa` to `a`, `i` to `ee`, `kh` to `k`, `ch` to `chh`, `v` to `w`), a dropped letter, or a stretched short word. Results are averaged over 5 noise seeds.
-3. **Normalization.** Each unknown word is mapped to the closest word in the training Hinglish vocabulary: candidates of similar length, difflib similarity of at least 0.75, then the most frequent among matches within 0.08 of the best score. The vocabulary comes from the training set only.
-4. **Metric.** Macro F1, because the classes are imbalanced and accuracy is inflated by the largest class.
+1. ****Transliteration.**** Devanagari is converted to Roman letters with `indic-transliteration` (ITRANS) plus rules for casual spelling (Devanagari dotted letters cleaned, silent final vowel dropped, lowercase). English loanwords come out phonetically (`tebalet` for "tablet") because Devanagari does not record the original spelling.
+2. ****Spelling noise.**** Applied to the Hinglish test set only. Each word is edited with probability 0.3 (Low), 0.6 (Medium) or 1.0 (High). An edit is a letter swap (`aa` to `a`, `i` to `ee`, `kh` to `k`, `ch` to `chh`, `v` to `w`), a dropped letter, or a stretched short word. Results are averaged over 5 noise seeds.
+3. ****Normalization.**** Each unknown word is mapped to the closest word in the training Hinglish vocabulary: candidates of similar length, difflib similarity of at least 0.75, then the most frequent among matches within 0.08 of the best score. The vocabulary comes from the training set only.
+4. ****Metric.**** Macro F1, because the classes are imbalanced and accuracy is inflated by the largest class.
 
-## Models
-
+**## Models**
 | Model | How it sees an unseen spelling |
 |---|---|
 | TF-IDF + Logistic Regression | Whole-word counts, so a misspelling is an unknown word |
@@ -57,14 +51,12 @@ Devanagari dataset -> clean + split (80/20)
 
 All models use class-balanced training. Each was trained in up to three setups: Hindi only, Hinglish only, and Hindi + Hinglish together.
 
-Fine-Tuned indicBERT model can be found at this link: `https://drive.google.com/drive/folders/11Fyju7EzLF4X4iYmymkvlKJ8pHsIerjK?usp=sharing`
+Fine-Tuned indicBERT model can be found at this link: `https://drive.google.com/drive/folders/11Fyju7EzLF4X4iYmymkvlKJ8pHsIerjK?usp=sharing\`
 
-## Results (product review dataset)
-
+**## Results (product review dataset)**
 Scores are macro F1 on 500 test reviews (70 negative), one training run per model. Differences under about 0.03 are within noise.
 
-**Robustness on Hinglish text (models trained on Hinglish only)**
-
+****Robustness on Hinglish text (models trained on Hinglish only)****
 | Model | Clean Hinglish | High noise | Drop | High noise, normalized |
 |---|---|---|---|---|
 | TF-IDF + LogReg | 0.696 | 0.251 | 64% | 0.654 |
@@ -72,8 +64,7 @@ Scores are macro F1 on 500 test reviews (70 negative), one training run per mode
 | fastText | 0.655 | 0.542 | 17% | 0.627 |
 | IndicBERT | 0.674 | 0.493 | 27% | 0.660 |
 
-**Clean Hindi (models trained on Hindi + Hinglish)**
-
+****Clean Hindi (models trained on Hindi + Hinglish)****
 | Model | Clean Hindi | Clean Hinglish |
 |---|---|---|
 | TF-IDF + LogReg | 0.686 | 0.694 |
@@ -81,48 +72,70 @@ Scores are macro F1 on 500 test reviews (70 negative), one training run per mode
 | fastText | 0.647 | 0.649 |
 | IndicBERT | 0.832 | 0.719 |
 
-**Main findings**
-
+****Main findings****
 - A model trained only on Devanagari is at chance level on Hinglish (about 0.19 for three classes) for TF-IDF, LSTM and fastText. IndicBERT trained on Hindi only still reaches 0.493, so it transfers partly across scripts.
 - Word-based models (TF-IDF, LSTM) lose about two thirds of their score at High noise, because a misspelled word becomes an unknown word. fastText loses the least (17%), which supports the idea that character pieces help against spelling variation.
 - Normalization recovers most of the loss for every model. After normalization all four models score between 0.62 and 0.66 on Hinglish at High noise.
 - IndicBERT is clearly best on clean Hindi (0.83 vs 0.63 to 0.69).
 - On the 7-class emotion dataset (about 0.25 macro F1, with chance at 0.14), fastText also lost the least under noise, so the ordering agrees across both datasets.
 
-## Limitations
+**## NLP Dataset Intelligence and Model Recommendation**
 
+The Gradio application also includes a dataset analysis and model recommendation feature. A CSV dataset can be uploaded and analyzed before selecting an existing model.
+
+The analyzer provides:
+- Automatic text and label column detection.
+- Task detection for sentiment classification when compatible labels are available.
+- Dataset statistics including document count, character length, token length, vocabulary size, unique token ratio and duplicate percentage.
+- NLP-specific analysis including punctuation density, emoji count and top tokens.
+- Automatic language detection for languages such as Hindi, Marathi and English.
+- Script detection for Latin, Devanagari and mixed-script text.
+- Detection of code-mixed and romanized text.
+- Language and script distribution charts.
+
+When labels are available for a compatible sentiment-classification dataset, the application benchmarks the existing models without retraining them and reports Accuracy, Precision, Recall, Macro F1, Weighted F1 and average inference time.
+
+The user can select:
+- **Accuracy** — prioritizes measured classification quality.
+- **Speed** — prioritizes inference speed.
+- **Balanced** — combines measured model quality and inference speed.
+
+The system then ranks the available existing models and provides a model recommendation based on the selected priority.
+
+For unlabeled datasets or unsupported NLP tasks, the application reports dataset compatibility and profile information without fabricating accuracy or F1 results.
+
+**## Limitations**
 - The noise and the normalizer are rules written by us. The normalizer is designed to undo exactly this kind of edit, so the recovery numbers are an upper bound. Real user spelling is messier (`bhot` for `bahut`).
 - Hinglish is generated by rule-based transliteration, not collected from real users, and English loanwords are spelled phonetically.
 - Frequency preference in the normalizer can overwrite rare words (for example `bajr` was mapped to `bar` instead of `bajar`).
 - One training run per model on a small test set. Gaps under about 0.03 should not be read as real differences.
 - English and real code-mixed text are not supported.
 
-## Setup
-
+**## Setup**
 Create the conda environment:
-
 ```bash
 conda create --name nlp-mini-proj python=3.11
 conda activate nlp-mini-proj
 ```
 
 Install requirements:
-
 ```bash
 pip install -r requirements.txt
 ```
 
-## Running the demo
+**## Running the demo**
 Start the Gradio UI:
-
 ```bash
 python app.py
 ```
 
 Then open `http://127.0.0.1:7860` in your browser. To get a temporary public link, change the last line of `app.py` to `demo.launch(share=True)`.
 
-**What the demo does:** you type a Hindi (Devanagari) or Hinglish (Roman) review. Hinglish input is normalized first, then IndicBERT predicts positive, neutral or negative with a confidence for each class. The interface also shows the detected script and the text actually sent to the model. English input is not supported.
+****What the demo does:**** you type a Hindi (Devanagari) or Hinglish (Roman) review. Hinglish input is normalized first, then IndicBERT predicts positive, neutral or negative with a confidence for each class. The interface also shows the detected script and the text actually sent to the model.
 
-## Tech stack
+The Dataset Intelligence section allows you to upload a CSV dataset and analyze its NLP characteristics, detect language and script patterns, and benchmark the available sentiment models when labels are present.
 
-Python 3.11, scikit-learn, PyTorch, Hugging Face Transformers, fastText, indic-transliteration, Gradio.
+English input is not supported.
+
+**## Tech stack**
+Python 3.11, scikit-learn, PyTorch, Hugging Face Transformers, fastText, indic-transliteration, Gradio, lingua-language-detector.
