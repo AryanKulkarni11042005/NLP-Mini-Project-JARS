@@ -1,4 +1,4 @@
-import os, re, pickle, difflib, time
+import os, re, pickle, difflib, time, glob
 from functools import lru_cache
 
 import numpy as np
@@ -8,11 +8,27 @@ MODEL_DIR = os.path.join(HERE, "model")
 
 MODEL_NAMES = ["IndicBERT", "TF-IDF + LogReg", "LSTM", "fastText"]
 
+def _model_artifact(model, subdir, filename):
+    """Find a model in the legacy layout or a timestamped export bundle."""
+    expected = os.path.join(MODEL_DIR, subdir, filename)
+    if os.path.isfile(expected):
+        return expected
+
+    # Some training/export runs keep each model under a timestamped folder,
+    # e.g. model/tfidf-<run-id>/tfidf/tfidf.joblib.
+    candidates = glob.glob(os.path.join(
+        MODEL_DIR, f"{subdir}-*", subdir, filename
+    ))
+    if not candidates:
+        return expected
+    return max(candidates, key=os.path.getmtime)
+
+
 PATHS = {
-    "IndicBERT": os.path.join(MODEL_DIR, "config.json"),
-    "TF-IDF + LogReg": os.path.join(MODEL_DIR, "tfidf", "tfidf.joblib"),
-    "LSTM": os.path.join(MODEL_DIR, "lstm", "lstm.pt"),
-    "fastText": os.path.join(MODEL_DIR, "fasttext", "fasttext.bin"),
+    "IndicBERT": _model_artifact("IndicBERT", "indicBERT", "config.json"),
+    "TF-IDF + LogReg": _model_artifact("tfidf", "tfidf", "tfidf.joblib"),
+    "LSTM": _model_artifact("lstm", "lstm", "lstm.pt"),
+    "fastText": _model_artifact("fasttext", "fasttext", "fasttext.bin"),
 }
 
 
@@ -62,8 +78,9 @@ def _load_indicbert():
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
     dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    tok = AutoTokenizer.from_pretrained(MODEL_DIR)
-    net = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR).to(dev).eval()
+    checkpoint_dir = os.path.dirname(PATHS["IndicBERT"])
+    tok = AutoTokenizer.from_pretrained(checkpoint_dir)
+    net = AutoModelForSequenceClassification.from_pretrained(checkpoint_dir).to(dev).eval()
 
     def run(text):
         enc = tok(text, return_tensors="pt", truncation=True, max_length=64).to(dev)
